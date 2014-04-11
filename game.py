@@ -88,16 +88,15 @@ class Mover:
 					else:
 						offsety /= abs(offsety)
 						offsetx = 0
-					print offsetx,offsety
 					if entities[0].name == "bad":
-						probs[dirdict[(-offsetx,-offsety)]] += (self.energy/realdist) #magic number: Neuronic impulse
+						probs[dirdict[(-offsetx,-offsety)]] += ((self.energy+1)*8192/(realdist*realdist)) #magic number: Neuronic impulse
 					else:
-						probs[dirdict[(offsetx,offsety)]] += int(4096/(realdist)) #magic number: Neuronic impulse
+						probs[dirdict[(offsetx,offsety)]] += int(4096/(realdist*realdist)) #magic number: Neuronic impulse
 		maxprobs = max(probs)
 		probs = [ maxprobs if x == maxprobs else x for x in probs]
 		return probs
 	def update(self,tick):
-		if tick % 1 != 0:
+		if tick % 2 != 0:
 			return
 		if self.energy != 0:
 			self.energy -= 1
@@ -134,7 +133,7 @@ class BadMover:
 		self.entity = entity
 	def update(self,tick):
 		if tick % 640 == 0:
-			self.entity.delete()
+			#self.entity.delete()
 			return
 		if tick % 10 != 0:
 			return
@@ -252,7 +251,7 @@ class Game:
 			controller.control(pygame.event.get())
 			entitymanager.update(self.tick) #model
 			entitymanager.makeFood(self.tick)
-			#entitymanager.makeBad(self.tick)
+			entitymanager.makeBad(self.tick)
 			surface.fill(black)
 			entitymanager.draw()
 			pygame.display.update()
